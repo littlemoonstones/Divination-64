@@ -1,0 +1,294 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <script src="https://code.jquery.com/jquery-3.4.1.min.js"
+        integrity="sha256-CSXorXvZcTkaix6Yvo6HppcZGetbYMGWSFlBw8HfCJo=" crossorigin="anonymous"></script>
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css"
+        integrity="sha384-ggOyR0iXCbMQv3Xipma34MD+dH/1fQ784/j6cY/iJTQUOhcWr7x9JvoRxT2MZw1T" crossorigin="anonymous">
+    <title>易經卜卦</title>
+</head>
+<style>
+    .jumbotron {
+        background: url("./image-cover/desk.jpeg") no-repeat center center;
+        background-size: cover;
+        color: white;
+    }
+
+    .gua {
+        height: 45px;
+        width: 100%;
+        font-size: 1.5rem;
+        color: black;
+    }
+
+    .bg-normal {
+        border: 1px solid black;
+        background-color: white;
+    }
+
+    .bg-current {
+        border: none;
+        background-color: black;
+        color: white
+    }
+</style>
+
+<body>
+    <!-- Cover BEGIN-->
+    <div class="jumbotron jumbotron-fluid">
+        <div class="container">
+            <h3 class="display-4">易經卜卦</h3>
+            <p class="lead">內心有雜事，進來卜個卦</p>
+        </div>
+    </div>
+    <!-- Cover END-->
+
+    <!-- Result BEGIN -->
+    <div id='results' class="container">
+        <div class="row justify-content-center">
+            <img src="" class="img-fluid">
+        </div>
+        <div class="row justify-content-center mb-3">
+            <div>
+                <div>
+                    <label>主卦：</label>
+                    <a href="" id="link1" target="_blank">link1</a>
+                </div>
+                <div>
+                    <label>變卦：</label>
+                    <a href="" id="link2" target="_blank">link2</a>
+                </div>
+            </div>
+        </div>
+    </div>
+    <!-- Result END -->
+
+    <!-- 64卦 BEGIN -->
+    <div class="container">
+        <!-- 6爻 BEGIN -->
+        <div class="row justify-content-center mt-1">
+            <div class="col-4 gua">
+                <p id="gua-6" class="text-center"></p>
+            </div>
+        </div>
+        <div class="row justify-content-center mt-1">
+            <div class="col-4 gua">
+                <p id="gua-5" class="text-center"></p>
+            </div>
+        </div>
+        <div class="row justify-content-center mt-1">
+            <div class="col-4 gua">
+                <p id="gua-4" class="text-center"></p>
+            </div>
+        </div>
+        <div class="row justify-content-center mt-1">
+            <div class="col-4 gua">
+                <p id="gua-3" class="text-center"></p>
+            </div>
+        </div>
+        <div class="row justify-content-center mt-1">
+            <div class="col-4 gua">
+                <p id="gua-2" class="text-center"></p>
+            </div>
+        </div>
+        <div class="row justify-content-center mt-1">
+            <div class="col-4 gua">
+                <p id="gua-1" class="text-center"></p>
+            </div>
+        </div>
+        <!-- 6爻 END -->
+
+        <!-- Toss BEGIN -->
+        <div class="row justify-content-center my-2">
+            <button id="btn" type="button" class="btn btn-dark btn-lg">Toss</button>
+            <button id="retest" type="button" class="btn btn-outline-info btn-lg">Toss again</button>
+        </div>
+        <!-- Toss END -->
+    </div>
+    <!-- 64卦 BEGIN -->
+
+
+</body>
+<script>
+    $(document).ready(() => {
+
+        // Initializing
+        var index, results;
+        init();
+
+        // Begin tossing
+        $('#btn').click(() => {
+
+
+            if (index <= 6) {
+                // Getting a random integer between 6 and 9
+                let rand = Math.round(Math.random() * 3 + 6)
+
+                results += rand; // record result
+
+                // Marking the current cell
+                $('.gua').removeClass('bg-normal bg-current');
+                $('.gua').addClass('bg-normal');
+
+                // Editing the current cell
+                let current_gua = '#gua-' + index.toString();
+                $(current_gua).text(rand);
+                $(current_gua).parent().addClass('bg-current');
+
+                // Divination Finished
+                if (index == 6) {
+
+                    // Hiding the "Toss" button and Show the "Toss again" button
+                    $('#btn').css('display', 'none');
+                    $('#retest').css('display', 'block');
+                    setTimeout(() => {
+                        $('#retest').css('visibility', 'visible')
+                    }, 3000);
+
+                    // Add the url of the image
+                    $('img').attr('src', './images/' + results.toString() + '.png');
+
+                    // Decoding of the gua from results
+                    ans = translate(results.toString());
+                    let origin_gua = ConversionTable[ans.origin],
+                        change_gua = ConversionTable[ans.change]
+
+                    // Reference of links
+                    let url_id1 = (42257 - parseInt(origin_gua)).toString(),
+                        url_id2 = (42257 - parseInt(change_gua)).toString();
+
+                    if (origin_gua != change_gua) {
+                        $('#link1').attr('href', `https://www.golla.tw/sm/64gua/${url_id1}.html`);
+                        $('#link2').attr('href', `https://www.golla.tw/sm/64gua/${url_id2}.html`);
+                    } else {
+                        $('#link1').attr('href', `https://www.golla.tw/sm/64gua/${url_id1}.html`)
+                        $('#link2').parent().hide();
+                    }
+
+                    // Show the result
+                    $('#results').fadeIn('slow');
+                }
+                results *= 10;
+            }
+            index++;
+        });
+
+        // Toss again
+        $('#retest').click(() => {
+            init();
+        });
+
+        // Function of initialization
+        function init() {
+            index = 1;
+            results = 0;
+            $('#btn').css('display', 'block');
+            $('#retest').css('display', 'none');
+            $('#retest').css('visibility', 'hidden')
+            $('.gua p').text('');
+            $('.gua').removeClass('bg-normal bg-current');
+            $('.gua').addClass('bg-normal');
+            $('#link1').attr('href', '');
+            $('#link2').attr('href', '');
+            $('#results').hide();
+        }
+
+        function translate(origin_gua) {
+            let new_gua = '',
+                change = '',
+                change_gua = '';
+
+            for (let i = 0; i < origin_gua.length; i++) {
+                let str = origin_gua.charAt(i);
+                new_gua += (str == '7' || str == '9' ? '1' : '0');
+                change += (str == '9' || str == '6' ? '1' : '0');
+            }
+
+            for (let i = 0; i < origin_gua.length; i++) {
+                let str = new_gua.charAt(i);
+                if (change.charAt(i) == '1') {
+                    change_gua += (str == '1' ? '0' : '1');
+                } else {
+                    change_gua += str;
+                }
+            }
+
+            return {
+                'origin': new_gua,
+                'change': change_gua
+            };
+        }
+        var ConversionTable = {
+            '111111': '01',
+            '000000': '02',
+            '100010': '03',
+            '010001': '04',
+            '111010': '05',
+            '010111': '06',
+            '010000': '07',
+            '000010': '08',
+            '111011': '09',
+            '110111': '10',
+            '111000': '11',
+            '000111': '12',
+            '101111': '13',
+            '111101': '14',
+            '001000': '15',
+            '000100': '16',
+            '100110': '17',
+            '011001': '18',
+            '110000': '19',
+            '000011': '20',
+            '100101': '21',
+            '101001': '22',
+            '000001': '23',
+            '100000': '24',
+            '100111': '25',
+            '111001': '26',
+            '100001': '27',
+            '011110': '28',
+            '010010': '29',
+            '101101': '30',
+            '001110': '31',
+            '011100': '32',
+            '001111': '33',
+            '111100': '34',
+            '000101': '35',
+            '101000': '36',
+            '101011': '37',
+            '110101': '38',
+            '001010': '39',
+            '010100': '40',
+            '110001': '41',
+            '100011': '42',
+            '111110': '43',
+            '011111': '44',
+            '000110': '45',
+            '011000': '46',
+            '010110': '47',
+            '011010': '48',
+            '101110': '49',
+            '011101': '50',
+            '100100': '51',
+            '001001': '52',
+            '001011': '53',
+            '110100': '54',
+            '101100': '55',
+            '001101': '56',
+            '011011': '57',
+            '110110': '58',
+            '010011': '59',
+            '110010': '60',
+            '110011': '61',
+            '001100': '62',
+            '101010': '63',
+            '010101': '64',
+        }
+    });
+</script>
+
+</html>
