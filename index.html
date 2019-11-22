@@ -25,6 +25,10 @@
         color: black;
     }
 
+    div[id *="gua-"] {
+        transition: background-color .5s ease, color .3s ease-in;
+    }
+
     .bg-normal {
         border: 1px solid black;
         background-color: white;
@@ -49,9 +53,12 @@
 
     <!-- Result BEGIN -->
     <div id='results' class="container">
+        <!-- image -->
         <div class="row justify-content-center">
             <img src="" class="img-fluid">
         </div>
+
+        <!-- Explanation -->
         <div class="row justify-content-center mb-3">
             <div>
                 <div>
@@ -71,33 +78,33 @@
     <div class="container">
         <!-- 6爻 BEGIN -->
         <div class="row justify-content-center mt-1">
-            <div class="col-4 gua">
-                <p id="gua-6" class="text-center"></p>
+            <div id="gua-6" class="col-4 gua">
+                <p class="text-center"></p>
             </div>
         </div>
         <div class="row justify-content-center mt-1">
-            <div class="col-4 gua">
-                <p id="gua-5" class="text-center"></p>
+            <div id="gua-5" class="col-4 gua">
+                <p class="text-center"></p>
             </div>
         </div>
         <div class="row justify-content-center mt-1">
-            <div class="col-4 gua">
-                <p id="gua-4" class="text-center"></p>
+            <div id="gua-4" class="col-4 gua">
+                <p class="text-center"></p>
             </div>
         </div>
         <div class="row justify-content-center mt-1">
-            <div class="col-4 gua">
-                <p id="gua-3" class="text-center"></p>
+            <div id="gua-3" class="col-4 gua">
+                <p class="text-center"></p>
             </div>
         </div>
         <div class="row justify-content-center mt-1">
-            <div class="col-4 gua">
-                <p id="gua-2" class="text-center"></p>
+            <div id="gua-2" class="col-4 gua">
+                <p class="text-center"></p>
             </div>
         </div>
         <div class="row justify-content-center mt-1">
-            <div class="col-4 gua">
-                <p id="gua-1" class="text-center"></p>
+            <div id="gua-1" class="col-4 gua">
+                <p class="text-center"></p>
             </div>
         </div>
         <!-- 6爻 END -->
@@ -131,13 +138,12 @@
                 results += rand; // record result
 
                 // Marking the current cell
-                $('.gua').removeClass('bg-normal bg-current');
-                $('.gua').addClass('bg-normal');
+                $('.gua').removeClass('bg-current');
 
                 // Editing the current cell
                 let current_gua = '#gua-' + index.toString();
-                $(current_gua).text(rand);
-                $(current_gua).parent().addClass('bg-current');
+                $(current_gua).children('p').text(rand);
+                $(current_gua).addClass('bg-current');
 
                 // Divination Finished
                 if (index == 6) {
@@ -164,13 +170,14 @@
                     if (origin_gua != change_gua) {
                         $('#link1').attr('href', `https://www.golla.tw/sm/64gua/${url_id1}.html`);
                         $('#link2').attr('href', `https://www.golla.tw/sm/64gua/${url_id2}.html`);
+                        $('#link2').parent().show();
                     } else {
                         $('#link1').attr('href', `https://www.golla.tw/sm/64gua/${url_id1}.html`)
                         $('#link2').parent().hide();
                     }
 
                     // Show the result
-                    $('#results').fadeIn('slow');
+                    $('#results').slideDown('slow');
                 }
                 results *= 10;
             }
@@ -180,7 +187,9 @@
         // Toss again
         $('#retest').click(() => {
             init();
+            $('#results').slideUp('slow');
         });
+
 
         // Function of initialization
         function init() {
@@ -190,12 +199,25 @@
             $('#retest').css('display', 'none');
             $('#retest').css('visibility', 'hidden')
             $('.gua p').text('');
-            $('.gua').removeClass('bg-normal bg-current');
+            $('.gua').removeClass('bg-current');
             $('.gua').addClass('bg-normal');
             $('#link1').attr('href', '');
             $('#link2').attr('href', '');
-            $('#results').hide();
-            $('img').attr('src', '');
+            if ($('img').attr('src') == '') {
+                $('#results').hide();
+            } else {
+                if ($('#results').is(":hidden")) {
+                    $('#results').slideDown('slow');
+                    $('img').attr('src', '');
+                } else {
+                    $('#results').slideUp('slow', () => {
+                        $('img').attr('src', '');
+                    });
+
+                }
+            }
+
+
         }
 
         function translate(origin_gua) {
