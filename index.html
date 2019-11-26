@@ -138,7 +138,7 @@
 
             if (index <= 6) {
                 // Getting a random integer between 6 and 9
-                let rand = Math.round(Math.random() * 3 + 6)
+                let rand = getRandom();
 
                 results += rand; // record result
 
@@ -265,6 +265,23 @@
                 'change': change_gua
             };
         }
+
+        function getRandom() {
+            var a = Math.floor(Math.random() * 16) + 1;
+            // console.log(a);
+            if (a == 1) {
+                return 6;
+            } else if (2 <= a && a <= 6) {
+                return 7;
+            } else if (7 <= a && a <= 13) {
+                return 8;
+            } else if (14 <= a && a <= 16) {
+                return 9;
+            } else {
+                alert("Error", a);
+            }
+        }
+
         var ConversionTable = {
             '111111': '01',
             '000000': '02',
